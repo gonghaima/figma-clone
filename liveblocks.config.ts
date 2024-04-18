@@ -2,7 +2,7 @@ import { createClient } from "@liveblocks/client";
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
   
 const client = createClient({
-  // publicApiKey: "",
+  publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
   // authEndpoint: "/api/liveblocks-auth",
   // throttle: 100,
   async resolveUsers({ userIds }) {
