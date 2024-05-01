@@ -6,3 +6,6 @@ create liveblocks account, add new project, copy API Keys to .env.local file
 
 - Initialize the liveblocks.config.ts file
     - npx create-liveblocks-app@latest --init --framework react
+
+- Install shadcn/ui
+    - npx shadcn-ui@latest init
