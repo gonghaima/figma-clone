@@ -4,7 +4,7 @@ import { CollaborativeApp } from "./CollaborativeApp";
 export default function Page() {
   return (
     <Room>
-      <CollaborativeApp />
+      <h1 className='font-xl'>Liveblock Figma Clone</h1>
     </Room>
   );
 }
