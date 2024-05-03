@@ -1,13 +1,15 @@
-import type { Config } from 'tailwindcss';
 
-const config = {
+/* @type {import('tailwindcss').Config} */
+module.exports = { 
   darkMode: ['class'],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
+  content: [ 
+    "./app/**/*.{js,ts,jsx,tsx}", 
+    "./pages/**/*.{js,ts,jsx,tsx}", 
+    "./components/**/*.{js,ts,jsx,tsx}", 
+      
+    // Or if using `src` directory: 
+    "./src/**/*.{js,ts,jsx,tsx}", 
+  ], 
   prefix: '',
   theme: {
     container: {
@@ -44,8 +46,6 @@ const config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
-  },
+  }, 
   plugins: [require('tailwindcss-animate')],
-} satisfies Config;
-
-export default config;
+}
