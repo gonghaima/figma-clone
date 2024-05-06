@@ -1,7 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useMyPresence, useOthers } from '@/liveblocks.config';
 import LiveCursors from './cursor/LiveCursors'
+import CursorChat from './cursor/CursorChat'
 import { CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
+
 
 function Live() {
     const others = useOthers();
@@ -34,7 +36,7 @@ function Live() {
     }, []);
 
     const handlePointerLeave = useCallback((event: React.PointerEvent) => {
-        event.preventDefault();
+        setCursorState({ mode: CursorMode.Hidden });
         // if cursor is not in reaction selector mode, update the cursor position
         if (cursor == null || cursorState.mode !== CursorMode.ReactionSelector) {
             // broadcast the cursor position to other users
@@ -62,14 +64,54 @@ function Live() {
         }
     }, []);
 
+    // Listen to keyboard events to change the cursor state
+    useEffect(() => {
+        const onKeyUp = (e: KeyboardEvent) => {
+            if (e.key === "/") {
+                setCursorState({
+                    mode: CursorMode.Chat,
+                    previousMessage: null,
+                    message: "",
+                });
+            } else if (e.key === "Escape") {
+                updateMyPresence({ message: "" });
+                setCursorState({ mode: CursorMode.Hidden });
+            } else if (e.key === "e") {
+                setCursorState({ mode: CursorMode.ReactionSelector });
+            }
+        };
+
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "/") {
+                e.preventDefault();
+            }
+        };
+
+        window.addEventListener("keyup", onKeyUp);
+        window.addEventListener("keydown", onKeyDown);
+
+        return () => {
+            window.removeEventListener("keyup", onKeyUp);
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, [updateMyPresence]);
+
     return (
         <div
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
             onPointerDown={handlePointerDown}
-            className="h-[100vh] w-full flex justify-center items-center border-2 border-green-50"
+            className="h-[100vh] w-full flex justify-center items-center"
         >
             <h1 className='text-2xl text-white'>Liveblock Figma Clone</h1>
+            {cursor && (
+                <CursorChat
+                    cursor={cursor}
+                    cursorState={cursorState}
+                    setCursorState={setCursorState}
+                    updateMyPresence={updateMyPresence}
+                />
+            )}
             <LiveCursors others={others} />
         </div>
     )
