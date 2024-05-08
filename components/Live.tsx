@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useMyPresence, useOthers, useEventListener } from '@/liveblocks.config';
+import { useMyPresence, useOthers, useEventListener, useBroadcastEvent } from '@/liveblocks.config';
 import LiveCursors from './cursor/LiveCursors'
 import CursorChat from './cursor/CursorChat'
 import { CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
@@ -12,6 +12,8 @@ function Live() {
     const others = useOthers();
     const [{ cursor }, updateMyPresence] = useMyPresence() as any;
 
+    const broadcast = useBroadcastEvent();
+    
     // store the reactions created on mouse click
     const [reaction, setReaction] = useState<Reaction[]>([]);
 
@@ -49,26 +51,31 @@ function Live() {
             );
 
             // Broadcast the reaction to other users
-            // broadcast({
-            //     x: cursor.x,
-            //     y: cursor.y,
-            //     value: cursorState.reaction,
-            // });
+            broadcast({
+                x: cursor.x,
+                y: cursor.y,
+                value: cursorState.reaction,
+            });
         }
     }, 100);
 
     useEventListener((eventData) => {
         const event = eventData.event as ReactionEvent;
-        setReactions((reactions) =>
-          reactions.concat([
-            {
-              point: { x: event.x, y: event.y },
-              value: event.value,
-              timestamp: Date.now(),
-            },
-          ])
+        setReaction((reactions) =>
+            reactions.concat([
+                {
+                    point: { x: event.x, y: event.y },
+                    value: event.value,
+                    timestamp: Date.now(),
+                },
+            ])
         );
-      });
+    });
+
+    // Remove reactions that are not visible anymore (every 1 sec)
+    useInterval(() => {
+        setReaction((reactions) => reactions.filter((reaction) => reaction.timestamp > Date.now() - 4000));
+    }, 1000);
 
     // const setReactions = useCallback((reaction: ReactionEvent) => {});
 
