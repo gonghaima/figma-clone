@@ -13,7 +13,7 @@ const ActiveUsers = () => {
 
   // memoize the result of this function so that it doesn't change on every render but only when there are new users joining the room
   const memoizedUsers = useMemo(() => {
-    return <main className='flex items-center justify-center gap-1'>
+    return <main className='flex items-center justify-center gap-1 py-2'>
     <div className="flex pl-3">
     {currentUser && (
       <div>
