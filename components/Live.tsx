@@ -180,7 +180,7 @@ function Live() {
             onPointerUp={handlePointerUp}
             className="h-[100vh] w-full flex justify-center items-center"
         >
-            <h1 className='text-2xl text-white'>Liveblock Figma Clone</h1>
+            <canvas/>
             {/* ** {reaction && JSON.stringify(reaction)} ** */}
             {/* Render the reactions */}
             {reaction.map((r) => (
