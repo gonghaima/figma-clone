@@ -8,15 +8,17 @@ import FlyingReaction from './reaction/FlyingReaction';
 import useInterval from '@/hooks/useInterval';
 
 type Props = {
-    canvasRef: React.RefObject<HTMLCanvasElement | null>;
-}
+    canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+    undo: () => void;
+    redo: () => void;
+};
 
-function Live({canvasRef}: Props) {
+const Live = ({ canvasRef, undo, redo }: Props) => {
     const others = useOthers();
     const [{ cursor }, updateMyPresence] = useMyPresence() as any;
 
     const broadcast = useBroadcastEvent();
-    
+
     // store the reactions created on mouse click
     const [reaction, setReaction] = useState<Reaction[]>([]);
 
@@ -28,7 +30,7 @@ function Live({canvasRef}: Props) {
     // set the reaction of the cursor
     const setReactions = useCallback((reaction: string) => {
         console.log('inside setReactions');
-        
+
         setCursorState(prev => ({ ...prev, mode: CursorMode.Reaction, reaction, isPressed: false }));
     }, []);
 
@@ -36,21 +38,20 @@ function Live({canvasRef}: Props) {
     useInterval(() => {
         // debugger;
         if (cursorState.mode === CursorMode.Reaction && cursorState.isPressed && cursor) {
-        // if (cursorState.mode === CursorMode.Reaction) {
+            // if (cursorState.mode === CursorMode.Reaction) {
             // debugger;
             console.log('inside interval');
-            
+
             // concat all the reactions created on mouse click
-            setReaction((reactions) =>
-                {
-                    return reactions.concat([
-                        {
-                            point: { x: cursor.x, y: cursor.y },
-                            value: cursorState.reaction,
-                            timestamp: Date.now(),
-                        },
-                    ]);
-                }
+            setReaction((reactions) => {
+                return reactions.concat([
+                    {
+                        point: { x: cursor.x, y: cursor.y },
+                        value: cursorState.reaction,
+                        timestamp: Date.now(),
+                    },
+                ]);
+            }
             );
 
             // Broadcast the reaction to other users
@@ -143,6 +144,34 @@ function Live({canvasRef}: Props) {
         );
     }, [cursorState.mode, setCursorState]);
 
+    // trigger respective actions when the user clicks on the right menu
+    const handleContextMenuClick = useCallback((key: string) => {
+        switch (key) {
+            case "Chat":
+                setCursorState({
+                    mode: CursorMode.Chat,
+                    previousMessage: null,
+                    message: "",
+                });
+                break;
+
+            case "Reactions":
+                setCursorState({ mode: CursorMode.ReactionSelector });
+                break;
+
+            case "Undo":
+                undo();
+                break;
+
+            case "Redo":
+                redo();
+                break;
+
+            default:
+                break;
+        }
+    }, []);
+
     // Listen to keyboard events to change the cursor state
     useEffect(() => {
         const onKeyUp = (e: KeyboardEvent) => {
@@ -184,7 +213,7 @@ function Live({canvasRef}: Props) {
             onPointerUp={handlePointerUp}
             className="h-[100vh] w-full flex justify-center items-center"
         >
-            <canvas ref={canvasRef}/>
+            <canvas ref={canvasRef} />
             {/* ** {reaction && JSON.stringify(reaction)} ** */}
             {/* Render the reactions */}
             {reaction.map((r) => (

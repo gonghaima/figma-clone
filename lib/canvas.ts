@@ -344,7 +344,7 @@ export const renderCanvas = ({
   fabricRef.current?.clear();
 
   // render all objects on canvas
-  Array.from(canvasObjects, ([objectId, objectData]) => {
+  canvasObjects && Array.from(canvasObjects, ([objectId, objectData]) => {
     /**
      * enlivenObjects() is used to render objects on canvas.
      * It takes two arguments:
