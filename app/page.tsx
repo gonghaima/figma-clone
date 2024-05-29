@@ -7,8 +7,9 @@ import Live from '@/components/Live';
 import Navbar from '@/components/Navbar';
 import RightSidebar from '@/components/RightSidebar';
 import { handleCanvasMouseDown, handleCanvasMouseUp, handleCanvasObjectModified, handleCanvasObjectMoving, handleCanvasObjectScaling, handleCanvasSelectionCreated, handleCanvasZoom, handleCanvaseMouseMove, handlePathCreated, handleResize, initializeFabric, renderCanvas } from '@/lib/canvas';
-import { handleKeyDown } from '@/lib/key-events';
+import { handleDelete, handleKeyDown } from '@/lib/key-events';
 import { ActiveElement, Attributes } from '@/types/type';
+import { defaultNavElement } from '@/constants';
 
 export default function Page() {
   const undo = useUndo();
@@ -137,9 +138,9 @@ export default function Page() {
       // delete the selected shape from the canvas
       case "delete":
         // delete it from the canvas
-        // handleDelete(fabricRef.current as any, deleteShapeFromStorage);
+        handleDelete(fabricRef.current as any, deleteShapeFromStorage);
         // set "select" as the active element
-        // setActiveElement(defaultNavElement);
+        setActiveElement(defaultNavElement);
         break;
 
       // upload an image to the canvas
