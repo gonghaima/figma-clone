@@ -10,6 +10,7 @@ import { handleCanvasMouseDown, handleCanvasMouseUp, handleCanvasObjectModified,
 import { handleDelete, handleKeyDown } from '@/lib/key-events';
 import { ActiveElement, Attributes } from '@/types/type';
 import { defaultNavElement } from '@/constants';
+import { handleImageUpload } from '@/lib/shapes';
 
 export default function Page() {
   const undo = useUndo();
@@ -398,12 +399,12 @@ export default function Page() {
           // prevent the default behavior of the input element
           e.stopPropagation();
 
-          // handleImageUpload({
-          //   file: e.target.files[0],
-          //   canvas: fabricRef as any,
-          //   shapeRef,
-          //   syncShapeInStorage,
-          // });
+          handleImageUpload({
+            file: e.target.files[0],
+            canvas: fabricRef as any,
+            shapeRef,
+            syncShapeInStorage,
+          });
         }}
         handleActiveElement={handleActiveElement}
       />
