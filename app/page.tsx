@@ -72,7 +72,7 @@ export default function Page() {
      * delete: https://liveblocks.io/docs/api-reference/liveblocks-client#LiveMap.delete
      */
     const canvasObjects = storage.get("canvasObjects");
-    canvasObjects.delete(shapeId);
+    canvasObjects?.delete(shapeId);
   }, []);
 
   /**
@@ -204,14 +204,14 @@ export default function Page() {
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
     canvas.on("mouse:move", (options) => {
-      // handleCanvaseMouseMove({
-      //   options,
-      //   canvas,
-      //   isDrawing,
-      //   selectedShapeRef,
-      //   shapeRef,
-      //   syncShapeInStorage,
-      // });
+      handleCanvaseMouseMove({
+        options,
+        canvas,
+        isDrawing,
+        selectedShapeRef,
+        shapeRef,
+        syncShapeInStorage,
+      });
     });
 
     /**
@@ -409,7 +409,8 @@ export default function Page() {
         handleActiveElement={handleActiveElement}
       />
       <section className='flex h-full flex-row'>
-        <LeftSidebar />
+        {/* <LeftSidebar allShapes={Array?.from(canvasObjects)} /> */}
+        <LeftSidebar allShapes={canvasObjects} />
         <Live canvasRef={canvasRef} undo={undo} redo={redo} />
         <RightSidebar />
       </section>
