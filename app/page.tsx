@@ -1,12 +1,25 @@
-"use client";
+'use client';
 import { useEffect, useRef, useState } from 'react';
-import { useMutation, useRedo, useStorage, useUndo } from "@/liveblocks.config";
+import { useMutation, useRedo, useStorage, useUndo } from '@/liveblocks.config';
 
 import LeftSidebar from '@/components/LeftSidebar';
 import Live from '@/components/Live';
 import Navbar from '@/components/Navbar';
 import RightSidebar from '@/components/RightSidebar';
-import { handleCanvasMouseDown, handleCanvasMouseUp, handleCanvasObjectModified, handleCanvasObjectMoving, handleCanvasObjectScaling, handleCanvasSelectionCreated, handleCanvasZoom, handleCanvaseMouseMove, handlePathCreated, handleResize, initializeFabric, renderCanvas } from '@/lib/canvas';
+import {
+  handleCanvasMouseDown,
+  handleCanvasMouseUp,
+  handleCanvasObjectModified,
+  handleCanvasObjectMoving,
+  handleCanvasObjectScaling,
+  handleCanvasSelectionCreated,
+  handleCanvasZoom,
+  handleCanvaseMouseMove,
+  handlePathCreated,
+  handleResize,
+  initializeFabric,
+  renderCanvas,
+} from '@/lib/canvas';
 import { handleDelete, handleKeyDown } from '@/lib/key-events';
 import { ActiveElement, Attributes } from '@/types/type';
 import { defaultNavElement } from '@/constants';
@@ -28,27 +41,27 @@ export default function Page() {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [activeElement, setActiveElement] = useState<ActiveElement>({
-    name: "",
-    value: "",
-    icon: "",
+    name: '',
+    value: '',
+    icon: '',
   });
 
   /**
- * elementAttributes is an object that contains the attributes of the selected
- * element in the canvas.
- *
- * We use this to update the attributes of the selected element when the user
- * is editing the width, height, color etc properties/attributes of the
- * object.
- */
+   * elementAttributes is an object that contains the attributes of the selected
+   * element in the canvas.
+   *
+   * We use this to update the attributes of the selected element when the user
+   * is editing the width, height, color etc properties/attributes of the
+   * object.
+   */
   const [elementAttributes, setElementAttributes] = useState<Attributes>({
-    width: "",
-    height: "",
-    fontSize: "",
-    fontFamily: "",
-    fontWeight: "",
-    fill: "#aabbcc",
-    stroke: "#aabbcc",
+    width: '',
+    height: '',
+    fontSize: '',
+    fontFamily: '',
+    fontWeight: '',
+    fill: '#aabbcc',
+    stroke: '#aabbcc',
   });
 
   /**
@@ -71,7 +84,7 @@ export default function Page() {
      *
      * delete: https://liveblocks.io/docs/api-reference/liveblocks-client#LiveMap.delete
      */
-    const canvasObjects = storage.get("canvasObjects");
+    const canvasObjects = storage.get('canvasObjects');
     canvasObjects?.delete(shapeId);
   }, []);
 
@@ -86,7 +99,7 @@ export default function Page() {
    */
   const deleteAllShapes = useMutation(({ storage }) => {
     // get the canvasObjects store
-    const canvasObjects = storage.get("canvasObjects");
+    const canvasObjects = storage.get('canvasObjects');
 
     // if the store doesn't exist or is empty, return
     if (!canvasObjects || canvasObjects.size === 0) return true;
@@ -100,7 +113,6 @@ export default function Page() {
     return canvasObjects.size === 0;
   }, []);
 
-
   const syncShapeInStorage = useMutation(({ storage }, object) => {
     // if the passed object is null, return
     if (!object) return;
@@ -113,7 +125,7 @@ export default function Page() {
     const shapeData = object.toJSON();
     shapeData.objectId = objectId;
 
-    const canvasObjects = storage.get("canvasObjects");
+    const canvasObjects = storage.get('canvasObjects');
     /**
      * set is a method provided by Liveblocks that allows you to set a value
      *
@@ -127,7 +139,7 @@ export default function Page() {
 
     switch (elem?.value) {
       // delete all the shapes from the canvas
-      case "reset":
+      case 'reset':
         // clear the storage
         deleteAllShapes();
         // clear the canvas
@@ -137,7 +149,7 @@ export default function Page() {
         break;
 
       // delete the selected shape from the canvas
-      case "delete":
+      case 'delete':
         // delete it from the canvas
         handleDelete(fabricRef.current as any, deleteShapeFromStorage);
         // set "select" as the active element
@@ -145,7 +157,7 @@ export default function Page() {
         break;
 
       // upload an image to the canvas
-      case "image":
+      case 'image':
         // trigger the click event on the input element which opens the file dialog
         imageInputRef.current?.click();
         /**
@@ -162,7 +174,7 @@ export default function Page() {
         break;
 
       // for comments, do nothing
-      case "comments":
+      case 'comments':
         break;
 
       default:
@@ -186,7 +198,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("mouse:down", (options) => {
+    canvas.on('mouse:down', (options) => {
       handleCanvasMouseDown({
         options,
         canvas,
@@ -203,7 +215,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("mouse:move", (options) => {
+    canvas.on('mouse:move', (options) => {
       handleCanvaseMouseMove({
         options,
         canvas,
@@ -221,7 +233,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("mouse:up", () => {
+    canvas.on('mouse:up', () => {
       handleCanvasMouseUp({
         canvas,
         isDrawing,
@@ -241,7 +253,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("path:created", (options) => {
+    canvas.on('path:created', (options) => {
       handlePathCreated({
         options,
         syncShapeInStorage,
@@ -257,7 +269,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("object:modified", (options) => {
+    canvas.on('object:modified', (options) => {
       handleCanvasObjectModified({
         options,
         syncShapeInStorage,
@@ -271,7 +283,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas?.on("object:moving", (options) => {
+    canvas?.on('object:moving', (options) => {
       handleCanvasObjectMoving({
         options,
       });
@@ -284,7 +296,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("selection:created", (options) => {
+    canvas.on('selection:created', (options) => {
       handleCanvasSelectionCreated({
         options,
         isEditingRef,
@@ -299,7 +311,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("object:scaling", (options) => {
+    canvas.on('object:scaling', (options) => {
       handleCanvasObjectScaling({
         options,
         setElementAttributes,
@@ -313,7 +325,7 @@ export default function Page() {
      * Event inspector: http://fabricjs.com/events
      * Event list: http://fabricjs.com/docs/fabric.Canvas.html#fire
      */
-    canvas.on("mouse:wheel", (options) => {
+    canvas.on('mouse:wheel', (options) => {
       handleCanvasZoom({
         options,
         canvas,
@@ -327,7 +339,7 @@ export default function Page() {
      * We're using this to resize the canvas when the user resizes the
      * window.
      */
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       handleResize({
         canvas: fabricRef.current,
       });
@@ -339,7 +351,7 @@ export default function Page() {
      *
      * We're using this to perform some actions like delete, copy, paste, etc when the user presses the respective keys on the keyboard.
      */
-    window.addEventListener("keydown", (e) =>
+    window.addEventListener('keydown', (e) =>
       handleKeyDown({
         e,
         canvas: fabricRef.current,
@@ -362,13 +374,13 @@ export default function Page() {
       canvas.dispose();
 
       // remove the event listeners
-      window.removeEventListener("resize", () => {
+      window.removeEventListener('resize', () => {
         handleResize({
           canvas: null,
         });
       });
 
-      window.removeEventListener("keydown", (e) =>
+      window.removeEventListener('keydown', (e) =>
         handleKeyDown({
           e,
           canvas: fabricRef.current,
@@ -381,17 +393,17 @@ export default function Page() {
     };
   }, [canvasRef]);
 
-    // render the canvas when the canvasObjects from live storage changes
-    useEffect(() => {
-      renderCanvas({
-        fabricRef,
-        canvasObjects,
-        activeObjectRef,
-      });
-    }, [canvasObjects]);
-    
+  // render the canvas when the canvasObjects from live storage changes
+  useEffect(() => {
+    renderCanvas({
+      fabricRef,
+      canvasObjects,
+      activeObjectRef,
+    });
+  }, [canvasObjects]);
+
   return (
-    <main className='h-screen overflow-hidden'>
+    <main className="h-screen overflow-hidden">
       <Navbar
         imageInputRef={imageInputRef}
         activeElement={activeElement}
@@ -408,11 +420,18 @@ export default function Page() {
         }}
         handleActiveElement={handleActiveElement}
       />
-      <section className='flex h-full flex-row'>
+      <section className="flex h-full flex-row">
         {/* <LeftSidebar allShapes={Array?.from(canvasObjects)} /> */}
         <LeftSidebar allShapes={canvasObjects} />
         <Live canvasRef={canvasRef} undo={undo} redo={redo} />
-        <RightSidebar />
+        <RightSidebar
+          elementAttributes={elementAttributes}
+          setElementAttributes={setElementAttributes}
+          fabricRef={fabricRef}
+          isEditingRef={isEditingRef}
+          activeObjectRef={activeObjectRef}
+          syncShapeInStorage={syncShapeInStorage}
+        />
       </section>
     </main>
   );
