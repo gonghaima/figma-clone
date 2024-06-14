@@ -29,6 +29,7 @@ export default function Page() {
   const undo = useUndo();
   const redo = useRedo();
 
+
   const canvasObjects = useStorage((root) => root.canvasObjects);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricRef = useRef<fabric.Canvas | null>(null);

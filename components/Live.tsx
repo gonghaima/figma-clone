@@ -187,6 +187,7 @@ const Live = ({ canvasRef, undo, redo }: Props) => {
         break;
 
       case 'Undo':
+        debugger;
         undo();
         break;
 
